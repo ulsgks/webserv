@@ -1,0 +1,39 @@
+# Project binary and objects
+webserv
+obj/
+*.o
+*.a
+
+# IDE specific
+.vscode/
+
+# Build directories
+build/
+debug/
+release/
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Personal configuration files
+conf/local.conf
+conf/personal.conf
+conf/webserv_*
+
+# Dependency directories if you add any later
+vendor/
+node_modules/
+/build_debug
+webserv_debug
+tester

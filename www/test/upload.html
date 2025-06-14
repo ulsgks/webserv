@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Your Shit</title>
+    <link rel="stylesheet" href="/fuckingstyle.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚫️</text></svg>">
+</head>
+<body>
+    <h1>Upload Your Fucking Files</h1>
+    
+    <p>This demonstrates the webserver's ability to handle file uploads using POST requests.</p>
+    
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <p>
+            <label>
+                <strong>Select a file to upload:</strong><br>
+                <input type="file" name="file" required>
+            </label>
+        </p>
+        <p>
+            <button type="submit">Upload This Shit</button>
+        </p>
+    </form>
+
+    <hr>
+    
+    <h2>View Uploaded Files</h2>
+    
+    <p>Check out all the files that have been uploaded to the server thanks to directory listing.
+        The directory listing is generated automatically by the server with <code>autoindex on</code> directive.
+    
+    <p><a href="/uploads">Browse Uploads Directory</a></p>
+        
+    <footer>
+        <nav>
+            <p><a href="/">← Back to the motherfucking home page</a></p>
+        </nav>
+    </footer>
+</body>
+</html>

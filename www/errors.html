@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Testing Ground</title>
+    <link rel="stylesheet" href="/fuckingstyle.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔴</text></svg>">
+    <style>
+        .error-test {
+            margin: 2em 0;
+            padding: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .error-code {
+            font-weight: bold;
+            color: #aa4242;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 1em;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+        @media (prefers-color-scheme: dark) {
+            pre {
+                background-color: #1a1a1a;
+            }
+            .error-test {
+                border-color: #444;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>The Fucking Error Testing Ground</h1>
+    
+    <p>Welcome to the place where everything goes wrong on purpose. Here you can test all the fucking error responses this server can throw at you.</p>
+    
+    <p>Some errors can be triggered with simple links or forms, others need specific curl commands. Let's break some shit!</p>
+    
+    <hr>
+
+    <h2>Client Errors (4xx)</h2>
+
+    <div class="error-test">
+        <h3><span class="error-code">400</span> - Bad Request</h3>
+        <p>Malformed request that the server can't understand.</p>
+        <p><strong>How to trigger:</strong> Send a fucked up request with bad headers</p>
+        <pre>curl -X GET http://localhost:8080/ \
+  -H "Content-Length: not-a-number"</pre>
+        <p>Or with malformed request line:</p>
+        <pre>printf "GET  HTTP/1.1\r\nHost: localhost\r\n\r\n" | nc localhost 8080</pre>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">403</span> - Forbidden</h3>
+        <p>You're trying to access shit you shouldn't.</p>
+        <p><strong>How to trigger:</strong> Try to access sensitive files</p>
+        <ul>
+            <li><a href="/.git/config">Access .git directory</a></li>
+            <li><a href="/Makefile">Access Makefile</a></li>
+            <li><a href="/.htaccess">Access .htaccess</a></li>
+        </ul>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">404</span> - Not Found</h3>
+        <p>The classic "this shit doesn't exist" error.</p>
+        <p><strong>How to trigger:</strong> Click this link to nowhere</p>
+        <p><a href="/this/path/does/not/fucking/exist">Go to 404 land</a></p>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">405</span> - Method Not Allowed</h3>
+        <p>You're using the wrong HTTP method for this resource.</p>
+        <p><strong>How to trigger:</strong> Use DELETE on root (not allowed)</p>
+        <pre>curl -X DELETE http://localhost:8080/</pre>
+        <p>Or POST to a CGI script location without proper setup:</p>
+        <pre>curl -X POST http://localhost:8080/exact</pre>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">408</span> - Request Timeout</h3>
+        <p>The connection was idle for too fucking long.</p>
+        <p><strong>How to trigger:</strong> Open a connection and don't send anything, or send incomplete request</p>
+        <pre># Open connection and do nothing for 60+ seconds
+telnet localhost 8080
+# Then wait... connection will be closed after 60 seconds of inactivity</pre>
+        <p>Or send partial request and wait:</p>
+        <pre>(printf "GET / HTTP/1.1\r\n"; sleep 65) | nc localhost 8080</pre>
+        <p><em>Note: The server has a 60-second idle timeout. The connection is closed but might not return a 408 status.</em></p>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">409</span> - Conflict</h3>
+        <p>Usually happens when you try to upload a file that already exists.</p>
+        <p><strong>How to trigger:</strong> Upload a file twice</p>
+        <ol>
+            <li>Go to the <a href="/test/upload.html">upload page</a></li>
+            <li>Upload any file</li>
+            <li>Try to upload the same file again</li>
+        </ol>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">411</span> - Length Required</h3>
+        <p>POST request without Content-Length header.</p>
+        <p><strong>How to trigger:</strong> Send POST without Content-Length</p>
+        <pre>printf "POST / HTTP/1.1\r\nHost: localhost\r\n\r\nSome body data" | nc localhost 8080</pre>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">413</span> - Payload Too Large</h3>
+        <p>Your request body is too fucking big.</p>
+        <p><strong>How to trigger:</strong> Send a massive POST request</p>
+        <pre>dd if=/dev/zero bs=1M count=15 | curl -X POST http://localhost:8080/upload \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @-</pre>
+        <p>Or try uploading a file larger than 20MB on the <a href="/test/upload.html">upload page</a></p>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">414</span> - URI Too Long</h3>
+        <p>The URL is longer than my patience.</p>
+        <p><strong>How to trigger:</strong> Send a request with a huge fucking URI</p>
+        <pre>curl "http://localhost:8080/$(printf 'a%.0s' {1..3000})"</pre>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">431</span> - Request Header Fields Too Large</h3>
+        <p>Your headers are bigger than your fucking ego.</p>
+        <p><strong>How to trigger:</strong> Send headers exceeding 8KB limit</p>
+        <pre># Create a massive header value (8KB+)
+curl -X GET http://localhost:8080/ \
+  -H "X-Massive-Header: $(printf 'A%.0s' {1..9000})"</pre>
+        <p><em>Note: Server limits total header size to 8192 bytes</em></p>
+    </div>
+
+    <hr>
+
+    <h2>Server Errors (5xx)</h2>
+
+    <div class="error-test">
+        <h3><span class="error-code">500</span> - Internal Server Error</h3>
+        <p>The server fucked up internally.</p>
+        <p><strong>How to trigger:</strong> Run a CGI script that crashes</p>
+        <p><a href="/cgi-bin/error_500.sh">Trigger 500 Error</a></p>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">501</span> - Not Implemented</h3>
+        <p>You're trying to use some newfangled HTTP method we don't know about.</p>
+        <p><strong>How to trigger:</strong> Use a non-standard HTTP method</p>
+        <pre>curl -X PROPFIND http://localhost:8080/</pre>
+        <p>Or:</p>
+        <pre>curl -X MKCOL http://localhost:8080/newdir</pre>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">504</span> - Gateway Timeout</h3>
+        <p>CGI script took too fucking long to respond.</p>
+        <p><strong>How to trigger:</strong> Run a CGI that sleeps forever</p>
+        <p><a href="/cgi-bin/error_504.sh">Trigger 504 Timeout</a></p>
+        <p><em>Note: This will take 5 seconds to timeout</em></p>
+    </div>
+
+    <div class="error-test">
+        <h3><span class="error-code">505</span> - HTTP Version Not Supported</h3>
+        <p>You're using some future or ancient HTTP version.</p>
+        <p><strong>How to trigger:</strong> Use HTTP/2.0 or some other version</p>
+        <pre>printf "GET / HTTP/2.0\r\nHost: localhost\r\n\r\n" | nc localhost 8080</pre>
+    </div>
+
+    <hr>
+
+    <h2>Special Cases</h2>
+
+    <div class="error-test">
+        <h3>Header Size Limits</h3>
+        <p>The server has an 8KB limit for headers. Exceeding it may return 400 Bad Request instead of 431.</p>
+        <pre># Test the exact boundary
+size=8192
+curl -X GET http://localhost:8080/ \
+  -H "X-Exact-Limit: $(printf 'B%.0s' {1..$((size-50))})"</pre>
+    </div>
+
+    <div class="error-test">
+        <h3>Chunked Encoding Errors</h3>
+        <p>Test malformed chunked requests.</p>
+        <pre>printf "POST / HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: chunked\r\n\r\nZZZ\r\nInvalid chunk size\r\n0\r\n\r\n" | nc localhost 8080</pre>
+    </div>
+
+    <div class="error-test">
+        <h3>Multiple Errors Test</h3>
+        <p>Sometimes you can trigger multiple validation failures.</p>
+        <pre>curl -X BADMETHOD "http://localhost:8080/$(printf 'x%.0s' {1..3000})" \
+  -H "Content-Length: invalid" \
+  -H "Transfer-Encoding: chunked"</pre>
+    </div>
+
+    <footer>
+        <nav>
+            <p><a href="/">← Back to the motherfucking home page</a></p>
+        </nav>
+    </footer>
+</body>
+</html>

@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Webserver Makefile - Updated for subdirectory support
+# Webserver Makefile
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ SRC_DIR         = src
 INCLUDE_DIR     = includes
 
 # -----------------------------------------------------------------------------
-# Source Files - Using recursive search for subdirectories
+# Source Files
 # -----------------------------------------------------------------------------
 # Find all .cpp files recursively in src directory
 SRC_FILES       = $(shell find $(SRC_DIR) -name "*.cpp")

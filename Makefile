@@ -7,6 +7,12 @@
 # -----------------------------------------------------------------------------
 CXX             = c++
 CXXFLAGS        = -Wall -Wextra -Werror -std=c++98 -pedantic
+# Safety Flags
+CXXFLAGS        += -Wshadow -Wnull-dereference -Wcast-align -Wcast-qual
+# Best Practices Flags
+CXXFLAGS        += -Wnon-virtual-dtor -Woverloaded-virtual -Wunreachable-code
+# Optimization Flags
+CXXFLAGS        += -O3
 RM              = rm -rf
 NAME            = webserv
 DEBUG_NAME      = webserv_debug
@@ -22,7 +28,7 @@ RESET           = \033[0m
 # -----------------------------------------------------------------------------
 # Debug Configuration
 # -----------------------------------------------------------------------------
-DEBUG_FLAGS     = -g3
+DEBUG_FLAGS     = -g3 -O0
 SANITIZE_FLAGS  = -fsanitize=address -fsanitize=undefined# -fsanitize=leak
 
 # -----------------------------------------------------------------------------
